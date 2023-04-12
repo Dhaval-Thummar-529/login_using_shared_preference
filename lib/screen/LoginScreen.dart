@@ -5,6 +5,7 @@ import 'package:login_using_shared_preference/utils/customSnackbar.dart';
 import 'package:login_using_shared_preference/utils/customButton.dart';
 import 'package:login_using_shared_preference/utils/customInputField.dart';
 import 'package:login_using_shared_preference/utils/validations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -118,7 +119,8 @@ class _LoginScreen extends State<LoginScreen> {
                         const Text("Don't have an account?"),
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
+                            emptyAllFields();
+                            Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
@@ -159,9 +161,37 @@ class _LoginScreen extends State<LoginScreen> {
           context: context);
       passwordNode.requestFocus();
     } else {
-      FocusManager.instance.primaryFocus!.unfocus();
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+      checkEmailPassword(email, password, context);
     }
+  }
+
+  void checkEmailPassword(
+      String email, String password, BuildContext context) async {
+    List<String> data = [];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey(email)) {
+      data = prefs.getStringList(email)!;
+      if (data[3] == password) {
+        prefs.setStringList("cUser", [email, "1"]);
+        Navigator.pushReplacement(
+            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      } else {
+        customSnackbar()
+            .showSnackbar(label: "Incorrect password!", context: context);
+        passwordNode.requestFocus();
+      }
+    } else {
+      customSnackbar()
+          .showSnackbar(label: "Email does not exists!", context: context);
+      emailNode.requestFocus();
+    }
+  }
+
+  void emptyAllFields() {
+    FocusManager.instance.primaryFocus!.unfocus();
+    setState(() {
+      emailControl.text = "";
+      passwordControl.text = "";
+    });
   }
 }

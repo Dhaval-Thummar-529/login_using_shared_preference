@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:login_using_shared_preference/screen/ListScreen.dart';
+import 'package:login_using_shared_preference/screen/LoginScreen.dart';
 import 'package:login_using_shared_preference/utils/customButton.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  var liData;
+
+  HomeScreen({super.key, this.liData});
 
   @override
-  _HomeScreen createState() => _HomeScreen();
+  _HomeScreen createState() => _HomeScreen(liData: liData);
 }
 
 class _HomeScreen extends State<HomeScreen> {
+  var liData;
+
+  _HomeScreen({this.liData});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,16 +32,25 @@ class _HomeScreen extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const Expanded(
+            Expanded(
               child: Center(
-                child: Text(
-                  "Demo Text",
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                child: liData != null
+                    ? Text(
+                        liData,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                    : const Text(
+                        "",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
             Container(
@@ -42,7 +59,7 @@ class _HomeScreen extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   customButton().customBtn("List", () {
-                    Navigator.push(context,
+                    Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (context) => ListScreen()));
                   })
                 ],
@@ -51,6 +68,23 @@ class _HomeScreen extends State<HomeScreen> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: "Sign out",
+        onPressed: () {
+          signout();
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const LoginScreen()));
+        },
+        child: const Icon(
+          Icons.logout,
+          color: Colors.white,
+        ),
+      ),
     );
+  }
+
+  void signout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setStringList("cUser", ["", "0"]);
   }
 }

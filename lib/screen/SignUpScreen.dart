@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:login_using_shared_preference/screen/HomeScreen.dart';
-import 'package:login_using_shared_preference/screen/LoginScreen.dart';
 import 'package:login_using_shared_preference/utils/customButton.dart';
 import 'package:login_using_shared_preference/utils/customInputField.dart';
 import 'package:login_using_shared_preference/utils/customSnackbar.dart';
 import 'package:login_using_shared_preference/utils/validations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -215,10 +214,25 @@ class _signUpScreen extends State<SignUpScreen> {
           label: "Please enter compare password", context: context);
       cPasswordNode.requestFocus();
     } else if (!(password == cPassword)) {
-      customSnackbar().showSnackbar(label: "Password does not match!",context: context);
+      customSnackbar()
+          .showSnackbar(label: "Password does not match!", context: context);
       cPasswordNode.requestFocus();
     } else {
-      customSnackbar().showSnackbar(label: "Please login with shared credentials",context: context);
+      storeData(name, email, phone, password, context);
+    }
+  }
+
+  void storeData(String name, String email, String phone, String password,
+      BuildContext context) async {
+    List<String> data = [name, phone, email, password];
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey(email)) {
+      customSnackbar()
+          .showSnackbar(label: "Email Already exists!", context: context);
+    } else {
+      prefs.setStringList(email, data);
+      customSnackbar().showSnackbar(
+          label: "Please login with shared credentials", context: context);
       Navigator.pop(context);
     }
   }

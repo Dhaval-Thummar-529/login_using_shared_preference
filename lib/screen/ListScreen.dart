@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:login_using_shared_preference/screen/HomeScreen.dart';
 
 class ListScreen extends StatelessWidget {
   ListScreen({super.key});
@@ -42,12 +43,31 @@ class ListScreen extends StatelessWidget {
                 shrinkWrap: true,
                 itemCount: _li.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 120,vertical: 12),
-                    alignment: Alignment.center,
-                    color: Colors.blue.withOpacity(0.5),
-                    padding: const EdgeInsets.all(12),
-                    child: Text(
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 10),
+                    child: ListTile(
+                      hoverColor: Colors.blue.withOpacity(0.5),
+                      title: Center(
+                        child: Text(
+                          '${_li[index]}',
+                          style: const TextStyle(
+                              color: Colors.redAccent,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomeScreen(
+                                      liData: _li[index],
+                                    )));
+                      },
+                    ),
+                  );
+                  /*child: Text(
                       '${_li[index]}',
                       style: const TextStyle(
                           color: Colors.redAccent,
@@ -55,6 +75,7 @@ class ListScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                   );
+                  o*/
                 }),
           ],
         ),

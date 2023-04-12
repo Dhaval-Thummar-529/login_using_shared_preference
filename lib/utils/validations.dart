@@ -1,6 +1,6 @@
 class validations {
   bool nameValidator(String name) {
-    var nameValidation = RegExp(r"^[a-zA-Z]*$");
+    var nameValidation = RegExp(r"^[a-zA-Z ]*$");
     if (nameValidation.hasMatch(name)) {
       return true;
     } else {

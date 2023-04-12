@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:login_using_shared_preference/screen/HomeScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'LoginScreen.dart';
 
@@ -32,18 +34,12 @@ class _SplashScreen extends State<_sScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(
-        const Duration(seconds: 1),
-        () => Navigator.push(
-            context, MaterialPageRoute(builder: (context) => LoginScreen())));
+    checkUserExist(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("SplashScreen"),
-      ),
       body: SafeArea(
         child: Center(
           child: Wrap(
@@ -68,5 +64,29 @@ class _SplashScreen extends State<_sScreen> {
         ),
       ),
     );
+  }
+
+  void checkUserExist(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? cUser = [];
+    cUser = prefs.getStringList("cUser");
+    if (cUser == null || cUser[1] == "0") {
+      Timer(
+          const Duration(seconds: 3),
+          () => {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()))
+              });
+    } else {
+      Timer(
+          const Duration(seconds: 3),
+          () => {
+                Navigator.pop(context),
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()))
+              });
+    }
   }
 }
