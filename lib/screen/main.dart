@@ -40,47 +40,6 @@ class _SplashScreen extends StatelessWidget {
     );
   }
 
-  /*@override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Wrap(
-            children: [
-              Column(
-                children: [
-                  FadeTransition(
-                    opacity: curve,
-                    child: Container(
-                      height: 100,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        color: Colors.blue,
-                        borderRadius: BorderRadius.circular(8.0),
-                        border: Border.all(color: Colors.redAccent, width: 2.0),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          "Login System",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 40,
-                  ),
-                  CircularProgressIndicator(
-                      color: Colors.blue.withOpacity(0.5), strokeWidth: 5.0),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }*/
-
   Future<void> checkUserExist(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String>? cUser = [];

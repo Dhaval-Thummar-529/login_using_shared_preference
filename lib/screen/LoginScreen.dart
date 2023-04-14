@@ -28,6 +28,15 @@ class _LoginScreen extends State<LoginScreen> {
   final passwordControl = TextEditingController();
   FocusNode passwordNode = FocusNode();
 
+  final newPassControl = TextEditingController();
+  FocusNode newPassNode = FocusNode();
+
+  final newRPassControl = TextEditingController();
+  FocusNode newRPassNode = FocusNode();
+
+  final emailPassControl = TextEditingController();
+  FocusNode emailPassNode = FocusNode();
+
   bool isLoading = false;
 
   @override
@@ -44,6 +53,15 @@ class _LoginScreen extends State<LoginScreen> {
     //Password Dispose
     passwordControl.dispose();
     passwordNode.dispose();
+
+    newPassControl.dispose();
+    newPassNode.dispose();
+
+    newRPassControl.dispose();
+    newRPassNode.dispose();
+
+    emailPassControl.dispose();
+    emailPassNode.dispose();
     super.dispose();
   }
 
@@ -99,6 +117,31 @@ class _LoginScreen extends State<LoginScreen> {
                               TextInputType.visiblePassword,
                               TextInputAction.done,
                               true),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 40),
+                                child: TextButton(
+                                  onPressed: () {
+                                    displayDialog(context);
+                                  },
+                                  child: Text(
+                                    "Forgot password?",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.blue.withOpacity(0.5),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(
                             height: 40,
                           ),
@@ -186,8 +229,10 @@ class _LoginScreen extends State<LoginScreen> {
             const Duration(seconds: 3),
             () => {
                   Navigator.pop(context),
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const HomeScreen())),
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const HomeScreen())),
                   setState(() {
                     isLoading = false;
                   }),
@@ -210,5 +255,91 @@ class _LoginScreen extends State<LoginScreen> {
       emailControl.text = "";
       passwordControl.text = "";
     });
+  }
+
+  void forgotPassword(String email) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+  }
+
+  Future<Future> displayDialog(BuildContext xcontext) async {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return Container(
+              child: Column(
+            children: [
+              const SizedBox(
+                height: 5,
+              ),
+              const Text(
+                "Enter New Password",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14),
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Column(
+                children: [
+                  customInputField().customEdtField(
+                      "Email",
+                      emailPassControl,
+                      emailPassNode,
+                      TextInputType.emailAddress,
+                      TextInputAction.next,
+                      true),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  customInputField().customEdtField(
+                      "New Password",
+                      newPassControl,
+                      newPassNode,
+                      TextInputType.visiblePassword,
+                      TextInputAction.next,
+                      true),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                  customInputField().customEdtField(
+                      "Re-enter new password",
+                      newRPassControl,
+                      newRPassNode,
+                      TextInputType.visiblePassword,
+                      TextInputAction.done,
+                      true),
+                ],
+              ),
+            ],
+          ));
+
+          /*showDialog(
+        context: xcontext,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Enter New Password"),
+            content: Container(
+              alignment: Alignment.center,
+                child: Column(
+              children: [
+
+            )),
+            actions: <Widget>[
+              MaterialButton(
+                onPressed: () {},
+                child: const Text("Reset Password"),
+              ),
+              MaterialButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text("Cancel"),
+              )
+            ],
+          );
+        });*/
+        });
   }
 }
