@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:login_using_shared_preference/screen/HomeScreen.dart';
 
 class ListScreen extends StatelessWidget {
   ListScreen({super.key});
@@ -58,12 +56,7 @@ class ListScreen extends StatelessWidget {
                         ),
                       ),
                       onTap: () {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomeScreen(
-                                      liData: _li[index],
-                                    )));
+                        Navigator.pop(context, _li[index]);
                       },
                     ),
                   );

@@ -5,18 +5,32 @@ import 'package:login_using_shared_preference/utils/customButton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
-  var liData;
-
-  HomeScreen({super.key, this.liData});
+  const HomeScreen({super.key});
 
   @override
-  _HomeScreen createState() => _HomeScreen(liData: liData);
+  _HomeScreen createState() => _HomeScreen();
 }
 
 class _HomeScreen extends State<HomeScreen> {
-  var liData;
+  String liData = "";
+  List<String> cUser = [];
+  List<String> cUserData = [];
+  String name = "";
 
-  _HomeScreen({this.liData});
+  getCUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    cUser = prefs.getStringList("cUser")!;
+    cUserData = prefs.getStringList(cUser[0])!;
+    setState(() {
+      name = cUserData[0];
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getCUser();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,27 +45,33 @@ class _HomeScreen extends State<HomeScreen> {
       ),
       body: SafeArea(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
-              child: Center(
-                child: liData != null
-                    ? Text(
-                        liData,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )
-                    : const Text(
-                        "",
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
+            Text(
+              "Welcome $name",
+              style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
+            ),
+            Center(
+              child: liData.isNotEmpty
+                  ? Text(
+                      liData,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
                       ),
-              ),
+                    )
+                  : const Text(
+                      "",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
             ),
             Container(
               padding: const EdgeInsets.all(8.0),
@@ -59,8 +79,9 @@ class _HomeScreen extends State<HomeScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
                   customButton().customBtn("List", () {
-                    Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => ListScreen()));
+                    _navigateAndDisplaySelection(context);
+                    /*Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => ListScreen()));*/
                   })
                 ],
               ),
@@ -72,7 +93,7 @@ class _HomeScreen extends State<HomeScreen> {
         tooltip: "Sign out",
         onPressed: () {
           signout();
-          Navigator.pushReplacement(context,
+          Navigator.push(context,
               MaterialPageRoute(builder: (context) => const LoginScreen()));
         },
         child: const Icon(
@@ -86,5 +107,22 @@ class _HomeScreen extends State<HomeScreen> {
   void signout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setStringList("cUser", ["", "0"]);
+  }
+
+  Future<void> _navigateAndDisplaySelection(BuildContext context) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ListScreen()),
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      if (result != null) {
+        liData = result;
+      } else {
+        liData = "";
+      }
+    });
   }
 }

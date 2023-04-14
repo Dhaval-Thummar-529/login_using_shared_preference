@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:login_using_shared_preference/utils/customButton.dart';
 import 'package:login_using_shared_preference/utils/customInputField.dart';
@@ -13,6 +15,8 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _signUpScreen extends State<SignUpScreen> {
+  bool isLoading = false;
+
   final nameControl = TextEditingController();
   FocusNode nameNode = FocusNode();
 
@@ -149,9 +153,14 @@ class _signUpScreen extends State<SignUpScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      customButton().customBtn("Sign Up", () {
-                        signUp(context);
-                      }),
+                      isLoading
+                          ? CircularProgressIndicator(
+                              color: Colors.blue.withOpacity(0.5),
+                              strokeWidth: 5.0,
+                            )
+                          : customButton().customBtn("Sign Up", () {
+                              signUp(context);
+                            }),
                     ],
                   )
                 ],
@@ -230,10 +239,22 @@ class _signUpScreen extends State<SignUpScreen> {
       customSnackbar()
           .showSnackbar(label: "Email Already exists!", context: context);
     } else {
+      if (isLoading) return;
+      setState(() {
+        isLoading = true;
+      });
       prefs.setStringList(email, data);
-      customSnackbar().showSnackbar(
-          label: "Please login with shared credentials", context: context);
-      Navigator.pop(context);
+      Timer(
+          const Duration(seconds: 3),
+          () => {
+                setState(() {
+                  isLoading = true;
+                }),
+                customSnackbar().showSnackbar(
+                    label: "Please login with shared credentials",
+                    context: context),
+                Navigator.pop(context)
+              });
     }
   }
 }

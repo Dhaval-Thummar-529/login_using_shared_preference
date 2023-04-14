@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:login_using_shared_preference/screen/HomeScreen.dart';
 import 'package:login_using_shared_preference/screen/SignUpScreen.dart';
@@ -26,6 +28,8 @@ class _LoginScreen extends State<LoginScreen> {
   final passwordControl = TextEditingController();
   FocusNode passwordNode = FocusNode();
 
+  bool isLoading = false;
+
   @override
   void initState() {
     super.initState();
@@ -46,10 +50,6 @@ class _LoginScreen extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Sign In"),
-        centerTitle: true,
-      ),
       body: Center(
         child: SafeArea(
           child: SingleChildScrollView(
@@ -110,9 +110,14 @@ class _LoginScreen extends State<LoginScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    customButton().customBtn("Sign In", () {
-                      login(context);
-                    }),
+                    isLoading
+                        ? CircularProgressIndicator(
+                            color: Colors.blue.withOpacity(0.5),
+                            strokeWidth: 5.0,
+                          )
+                        : customButton().customBtn("Sign In", () {
+                            login(context);
+                          }),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -120,7 +125,7 @@ class _LoginScreen extends State<LoginScreen> {
                         TextButton(
                           onPressed: () {
                             emptyAllFields();
-                            Navigator.pushReplacement(
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) =>
@@ -173,8 +178,20 @@ class _LoginScreen extends State<LoginScreen> {
       data = prefs.getStringList(email)!;
       if (data[3] == password) {
         prefs.setStringList("cUser", [email, "1"]);
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        if (isLoading) return;
+        setState(() {
+          isLoading = true;
+        });
+        Timer(
+            const Duration(seconds: 3),
+            () => {
+                  Navigator.pop(context),
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const HomeScreen())),
+                  setState(() {
+                    isLoading = false;
+                  }),
+                });
       } else {
         customSnackbar()
             .showSnackbar(label: "Incorrect password!", context: context);
