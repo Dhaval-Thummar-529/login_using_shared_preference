@@ -68,7 +68,7 @@ class ListScreen extends StatelessWidget {
                           fontWeight: FontWeight.bold),
                     ),
                   );
-                  o*/
+                  */
                 }),
           ],
         ),

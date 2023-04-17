@@ -98,7 +98,9 @@ class _signUpScreen extends State<SignUpScreen> {
                             nameNode,
                             TextInputType.name,
                             TextInputAction.next,
-                            false),
+                            false,
+                            const Icon(Icons.person),
+                            true),
                         const SizedBox(
                           height: 20,
                         ),
@@ -108,7 +110,9 @@ class _signUpScreen extends State<SignUpScreen> {
                             cNumberNode,
                             TextInputType.phone,
                             TextInputAction.next,
-                            false),
+                            false,
+                            const Icon(Icons.phone),
+                            true),
                         const SizedBox(
                           height: 20,
                         ),
@@ -118,7 +122,9 @@ class _signUpScreen extends State<SignUpScreen> {
                             emailNode,
                             TextInputType.emailAddress,
                             TextInputAction.next,
-                            false),
+                            false,
+                            const Icon(Icons.email),
+                            true),
                         const SizedBox(
                           height: 20,
                         ),
@@ -128,6 +134,8 @@ class _signUpScreen extends State<SignUpScreen> {
                             passwordNode,
                             TextInputType.visiblePassword,
                             TextInputAction.next,
+                            true,
+                            const Icon(Icons.lock),
                             true),
                         const SizedBox(
                           height: 20,
@@ -138,6 +146,8 @@ class _signUpScreen extends State<SignUpScreen> {
                             cPasswordNode,
                             TextInputType.visiblePassword,
                             TextInputAction.done,
+                            true,
+                            const Icon(Icons.lock),
                             true),
                         const SizedBox(
                           height: 20,

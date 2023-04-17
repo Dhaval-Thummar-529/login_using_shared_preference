@@ -7,7 +7,7 @@ class customInputField {
       FocusNode focusNode,
       TextInputType textInputType,
       TextInputAction textInputAction,
-      bool obscureText) {
+      bool obscureText,Icon prefixIcon,bool enabled) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 40),
       child: Column(
@@ -21,17 +21,19 @@ class customInputField {
           const SizedBox(height: 10),
           TextField(
             obscureText: obscureText,
+            enabled: enabled,
             controller: controller,
             focusNode: focusNode,
             maxLength: textInputType == TextInputType.phone ? 10 : null,
             keyboardType: textInputType,
             textInputAction: textInputAction,
-            decoration: const InputDecoration(
+            decoration:  InputDecoration(
+              prefixIcon: prefixIcon,
               counterText: "",
-              contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
-              enabledBorder: OutlineInputBorder(
+              contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+              enabledBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.black45)),
-              border: OutlineInputBorder(
+              border: const OutlineInputBorder(
                 borderSide: BorderSide(color: Colors.black45),
               ),
             ),

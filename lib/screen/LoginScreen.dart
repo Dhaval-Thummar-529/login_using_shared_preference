@@ -106,7 +106,9 @@ class _LoginScreen extends State<LoginScreen> {
                               emailNode,
                               TextInputType.emailAddress,
                               TextInputAction.next,
-                              false),
+                              false,
+                              const Icon(Icons.email),
+                              true),
                           const SizedBox(
                             height: 20,
                           ),
@@ -116,6 +118,8 @@ class _LoginScreen extends State<LoginScreen> {
                               passwordNode,
                               TextInputType.visiblePassword,
                               TextInputAction.done,
+                              true,
+                              const Icon(Icons.lock),
                               true),
                           const SizedBox(
                             height: 5,
@@ -128,14 +132,14 @@ class _LoginScreen extends State<LoginScreen> {
                                     const EdgeInsets.symmetric(horizontal: 40),
                                 child: TextButton(
                                   onPressed: () {
-                                    displayDialog(context);
+                                    displayDialog();
                                   },
-                                  child: Text(
+                                  child: const Text(
                                     "Forgot password?",
                                     style: TextStyle(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.blue.withOpacity(0.5),
+                                      color: Colors.blue,
                                     ),
                                   ),
                                 ),
@@ -232,7 +236,7 @@ class _LoginScreen extends State<LoginScreen> {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const HomeScreen())),
+                          builder: (context) => HomeScreen())),
                   setState(() {
                     isLoading = false;
                   }),
@@ -257,89 +261,118 @@ class _LoginScreen extends State<LoginScreen> {
     });
   }
 
-  void forgotPassword(String email) async {
+  forgotPassword(String email, BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> data = [];
+    if (prefs.containsKey(email)) {
+      data = prefs.getStringList(email)!;
+      if (newPassControl.value.text == newRPassControl.value.text) {
+        prefs.setStringList(
+            email, [data[0], data[1], data[2], newPassControl.value.text]);
+        Navigator.of(context).pop();
+      } else {
+        customSnackbar()
+            .showSnackbar(label: "Password does not match", context: context);
+      }
+    } else {
+      customSnackbar()
+          .showSnackbar(label: "Email does not exist", context: context);
+    }
   }
 
-  Future<Future> displayDialog(BuildContext xcontext) async {
+  displayDialog() async {
     return showModalBottomSheet(
         context: context,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
         builder: (context) {
           return Container(
-              child: Column(
-            children: [
-              const SizedBox(
-                height: 5,
-              ),
-              const Text(
-                "Enter New Password",
-                style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14),
-              ),
-              const SizedBox(
-                height: 5,
-              ),
-              Column(
-                children: [
-                  customInputField().customEdtField(
-                      "Email",
-                      emailPassControl,
-                      emailPassNode,
-                      TextInputType.emailAddress,
-                      TextInputAction.next,
-                      true),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  customInputField().customEdtField(
-                      "New Password",
-                      newPassControl,
-                      newPassNode,
-                      TextInputType.visiblePassword,
-                      TextInputAction.next,
-                      true),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  customInputField().customEdtField(
-                      "Re-enter new password",
-                      newRPassControl,
-                      newRPassNode,
-                      TextInputType.visiblePassword,
-                      TextInputAction.done,
-                      true),
-                ],
-              ),
-            ],
-          ));
-
-          /*showDialog(
-        context: xcontext,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Enter New Password"),
-            content: Container(
-              alignment: Alignment.center,
-                child: Column(
+            child: Column(
               children: [
-
-            )),
-            actions: <Widget>[
-              MaterialButton(
-                onPressed: () {},
-                child: const Text("Reset Password"),
-              ),
-              MaterialButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text("Cancel"),
-              )
-            ],
+                const SizedBox(
+                  height: 5,
+                ),
+                const Text(
+                  "Enter New Password",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14),
+                ),
+                const SizedBox(
+                  height: 5,
+                ),
+                Column(
+                  children: [
+                    customInputField().customEdtField(
+                        "Email",
+                        emailPassControl,
+                        emailPassNode,
+                        TextInputType.emailAddress,
+                        TextInputAction.next,
+                        false,
+                        const Icon(Icons.email),
+                        true),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    customInputField().customEdtField(
+                        "New Password",
+                        newPassControl,
+                        newPassNode,
+                        TextInputType.visiblePassword,
+                        TextInputAction.next,
+                        true,
+                        const Icon(Icons.lock),
+                        true),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    customInputField().customEdtField(
+                        "Re-enter new password",
+                        newRPassControl,
+                        newRPassNode,
+                        TextInputType.visiblePassword,
+                        TextInputAction.done,
+                        true,
+                        const Icon(Icons.lock),
+                        true),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          if (emailPassControl.value.text.isEmpty) {
+                            customSnackbar().showSnackbar(
+                                label: "Please enter email!", context: context);
+                          } else if (!validations()
+                              .emailValidator(emailPassControl.value.text)) {
+                            customSnackbar().showSnackbar(
+                                label: "Please enter valid email!");
+                          } else if (newPassControl.value.text.isEmpty ||
+                              newRPassControl.value.text.isEmpty) {
+                            customSnackbar().showSnackbar(
+                                label: "Please enter password!",
+                                context: context);
+                          } else if (!validations()
+                              .passwordValidator(newPassControl.value.text)) {
+                            customSnackbar().showSnackbar(
+                                label: "Please enter valid password!");
+                          } else {
+                            forgotPassword(
+                                emailPassControl.value.text, context);
+                          }
+                        },
+                        child: const Text(
+                          "Reset Password",
+                          style: TextStyle(color: Colors.white),
+                        )),
+                  ],
+                ),
+              ],
+            ),
           );
-        });*/
         });
   }
 }
